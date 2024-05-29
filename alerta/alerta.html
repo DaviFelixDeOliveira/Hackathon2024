@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" />
+    <title>Alerta</title>
+</head>
+<body>
+    <div id="alert" class="alert" style="display: none;">
+        Formulário enviado com sucesso!
+    </div>
+    <div class="container">
+        <div class="checkbox-group">
+            <input type="checkbox" id="alagamento" name="op1">
+            <label for="alagamento">ALAGAMENTO</label>
+            <input type="checkbox" id="acidente" name="op2">
+            <label for="acidente">ACIDENTE</label>
+            <input type="checkbox" id="transito" name="op3">
+            <label for="transito">TRANSITO</label>
+        </div>
+        <textarea class="textbox" id="textbox" name="textbox" placeholder="Descreva o problema encontrado..."></textarea>
+        <div class="file-input-container">
+            <img id="imagePreview" style="display: none; width: 100%; height: auto; margin-bottom: 20px;" />
+            <label for="fileInput">+</label>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+        <button type="button" id="submitButton">ENVIAR</button>
+    </div>
+    <script>
+        document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    this.nextElementSibling.style.backgroundColor = '#888';
+                } else {
+                    this.nextElementSibling.style.backgroundColor = '#f0f0f0';
+                }
+            });
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imagePreview = document.getElementById('imagePreview');
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('submitButton').addEventListener('click', function() {
+            const alagamento = document.getElementById('alagamento').checked;
+            const acidente = document.getElementById('acidente').checked;
+            const transito = document.getElementById('transito').checked;
+            const description = document.getElementById('textbox').value;
+            const imageSrc = document.getElementById('imagePreview').src;
+
+            const alertData = {
+                alagamento,
+                acidente,
+                transito,
+                description,
+                imageSrc
+            };
+
+            let alerts = JSON.parse(localStorage.getItem('alerts')) || [];
+            alerts.push(alertData);
+            localStorage.setItem('alerts', JSON.stringify(alerts));
+
+            document.getElementById('alert').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('alert').style.display = 'none';
+                window.location.href = 'result.html';
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

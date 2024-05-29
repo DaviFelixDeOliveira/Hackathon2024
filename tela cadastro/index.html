@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="stilo.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
+    <title>Cadastro</title>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Criar Uma Conta</h2>
+        </div>
+        <form id="form" class="form">
+            <div class="form-control">
+                <label for="username">Nome de usuário</label>
+                <input type="text" id="username" placeholder="Digite seu nome de usuário..." />
+            </div>
+            <div class="form-control">
+                <label for="email">Email</label>
+                <input type="text" id="email" placeholder="Digite seu email..." />
+            </div>
+            <div class="form-control">
+                <label for="password">Senha</label>
+                <input type="password" id="password" placeholder="Digite sua senha..." />
+            </div>
+            <div class="form-control">
+                <label for="password-confirmation">Confirmação de senha</label>
+                <input type="password" id="password-confirmation" placeholder="Digite sua senha novamente..." />
+            </div>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+    <script src="https://kit.fontawesome.com/f9e19193d6.js" crossorigin="anonymous"></script>
+    <script>
+        document.getElementById('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const passwordConfirmation = document.getElementById('password-confirmation').value;
+
+            if (password !== passwordConfirmation) {
+                alert('As senhas não coincidem.');
+                return;
+            }
+
+            const usuario = {
+                nome: username,
+                email: email,
+                senha: password
+            };
+
+            localStorage.setItem('usuario', JSON.stringify(usuario));
+            alert('Cadastro realizado com sucesso!');
+            window.location.href = 'tela-inicial.html';
+        });
+    </script>
+</body>
+</html>

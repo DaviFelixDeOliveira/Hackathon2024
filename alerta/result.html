@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" />
+    <title>Resultado</title>
+</head>
+<body>
+    <div class="container">
+        <div id="result"></div>
+    </div>
+    <script>
+        window.addEventListener('load', () => {
+            const formData = JSON.parse(localStorage.getItem('formData'));
+            if (formData) {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `
+                    <h2>Informações Enviadas:</h2>
+                    <p><strong>ALAGAMENTO:</strong> ${formData.alagamento ? 'Sim' : 'Não'}</p>
+                    <p><strong>ACIDENTE:</strong> ${formData.acidente ? 'Sim' : 'Não'}</p>
+                    <p><strong>TRANSITO:</strong> ${formData.transito ? 'Sim' : 'Não'}</p>
+                    <p><strong>Descrição:</strong> ${formData.description}</p>
+                    ${formData.imageSrc ? `<img src="${formData.imageSrc}" alt="Imagem" style="width: 100%; height: auto;" />` : ''}
+                `;
+            } else {
+                document.getElementById('result').innerHTML = '<p>Nenhum dado enviado.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

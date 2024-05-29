@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="p.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <title>Tela de Usuário</title>
+    <style>
+        /* Estilos CSS */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #fafafa;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            width: 400px;
+            max-width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background-color: #fc6a03;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form {
+            padding: 20px;
+        }
+
+        .username {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .form button {
+            background-color: #fc6a03;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            width: 100%;
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .message {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            z-index: 999;
+        }
+
+        .success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .error {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>Informações de Usuário</h2>
+    </div>
+    <div class="username">
+        <p><strong id="nomeUsuario"></strong></p>
+    </div>
+    <form id="form" class="form">
+        <div class="form-control">
+            <label for="username">Nome de usuário</label>
+            <input disabled type="text" id="username" value="">
+        </div>
+        <div class="form-control">
+            <label for="email">E-mail</label>
+            <input type="text" id="email" disabled value="">
+        </div>
+        <div class="form-control">
+            <label for="password">Senha</label>
+            <input disabled type="password" id="password" value="">
+        </div>
+        <div class="form-control" id="confirmPasswordDiv" style="display: none;">
+            <label for="confirmPassword">Confirmar Senha</label>
+            <input type="password" id="confirmPassword">
+        </div>
+        <button type="button" id="editarBtn">Editar</button>
+        <button type="button" id="salvarBtn" style="display: none;">Salvar</button>
+    </form>
+</div>
+
+<div class="message" id="messageDiv"></div> <!-- Mensagem fora do formulário -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var usuario = JSON.parse(localStorage.getItem('usuario'));
+        if (usuario) {
+            document.getElementById('nomeUsuario').textContent = usuario.nome;
+            document.getElementById('username').value = usuario.nome;
+            document.getElementById('email').value = usuario.email;
+            document.getElementById('password').value = usuario.senha;
+        } else {
+            alert('Nenhum usuário cadastrado.');
+            window.location.href = 'cadastro.html';
+        }
+    });
+
+    document.getElementById("editarBtn").addEventListener("click", function() {
+        var inputs = document.querySelectorAll("#form input");
+        inputs.forEach(function(input) {
+            input.removeAttribute("disabled");
+        });
+
+        document.getElementById("confirmPasswordDiv").style.display = "block";
+        document.getElementById("editarBtn").style.display = "none";
+        document.getElementById("salvarBtn").style.display = "block";
+
+        clearMessages();
+    });
+
+    document.getElementById("salvarBtn").addEventListener("click", function() {
+        var usuario = JSON.parse(localStorage.getItem('usuario'));
+        var nomeUsuario = document.getElementById("nomeUsuario").textContent;
+        var novoNomeUsuario = document.getElementById("username").value;
+        var novoEmail = document.getElementById("email").value;
+        var novaSenha = document.getElementById("password").value;
+        var confirmarSenha = document.getElementById("confirmPassword").value;
+
+        if (novaSenha !== confirmarSenha) {
+            showMessage("As senhas não coincidem.", "error");
+            return;
+        }
+
+        if (novaSenha !== usuario.senha) {
+            showMessage("Senha incorreta.", "error");
+            return;
+        }
+
+        usuario.nome = novoNomeUsuario;
+        usuario.email = novoEmail;
+        usuario.senha = novaSenha;
+        localStorage.setItem('usuario', JSON.stringify(usuario));
+
+        showMessage("Alterações salvas com sucesso!", "success");
+
+        var inputs = document.querySelectorAll("#form input");
+        inputs.forEach(function(input) {
+            input.setAttribute("disabled", "");
+            input.value = input.getAttribute("value");
+        });
+
+        document.getElementById("confirmPasswordDiv").style.display = "none";
+        document.getElementById("editarBtn").style.display = "block";
+        document.getElementById("salvarBtn").style.display = "none";
+    });
+
+    function showMessage(message, messageType) {
+        var messageDiv = document.getElementById("messageDiv");
+        messageDiv.innerHTML = message;
+        messageDiv.className = "message " + messageType;
+        messageDiv.style.display = "block";
+    }
+
+    function clearMessages() {
+        var messageDiv = document.getElementById("messageDiv");
+        messageDiv.innerHTML = "";
+        messageDiv.style.display = "none";
+    }
+</script>
+
+</body>
+</html>
